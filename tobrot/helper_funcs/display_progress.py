@@ -6,7 +6,6 @@ import logging
 import math
 import os
 import time
-import psutil
 
 from pyrogram.errors.exceptions import FloodWait
 from tobrot import (
