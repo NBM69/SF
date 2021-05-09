@@ -9,6 +9,7 @@ hurry.filesize
 python-dotenv
 beautifulsoup4>=4.8.2,<4.8.10
 pyprog
+js2py
 bs4
 lxml
 requests
