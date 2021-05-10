@@ -89,7 +89,7 @@ class Progress:
                 # elapsed_time if elapsed_time != '' else "0 s",
                 estimated_total_time if estimated_total_time != "" else "0 s",
             )
-            tmp += "\n│"+"\n╰── ⌊ ⚡️ using engine pyrogram ⌉"
+            tmp += "\n│"+"\n╰── ⌊ ⚡️ 𝐔𝐬𝐢𝐧𝐠 𝐄𝐧𝐠𝐢𝐧𝐞 𝐏𝐲𝐫𝐨𝐠𝐫𝐚𝐦 ⌉"
             try:
                 if not self._mess.photo:
                     await self._mess.edit_text(
