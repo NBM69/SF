@@ -25,6 +25,6 @@ async def help_message_f(client, message):
     # display the /help
 
     await message.reply_text(
-        """No one can help you buddy expect yourself, for any help/support/issue contact my master Softfreakz!""",
+        """No one can help you buddy expect yourself, for any help/support/issue contact my master @DeadPool_Boss!""",
         disable_web_page_preview=True,
     )
