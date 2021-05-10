@@ -335,7 +335,7 @@ async def check_progress_for_dl(aria2, gid, event, previous_message):
 
                 # msg += f"\n<b>Status</b> : <code>{file.status}</code>"
                 msg += f"\n├<b>ETA</b> ⏳ :  <code>{file.eta_string()}</code>" +"\n│"
-                msg += "\n╰─── ⌊ ⚡️ using engine aria2 ⌉"
+                msg += "\n╰─── ⌊ ⚡️ 𝐔𝐬𝐢𝐧𝐠 𝐄𝐧𝐠𝐢𝐧𝐞 𝐀𝐫𝐢𝐚𝟐𝐜 ⌉"
                 inline_keyboard = []
                 ikeyboard = []
                 ikeyboard.append(
