@@ -5,10 +5,12 @@
 import asyncio
 import logging
 import os
+import io
 import sys
 import time
-
+import pyprog
 import aria2p
+
 from pyrogram.errors import FloodWait, MessageNotModified
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from tobrot import (
@@ -27,6 +29,8 @@ from tobrot.helper_funcs.create_compressed_archive import (
 )
 from tobrot.helper_funcs.extract_link_from_message import extract_link
 from tobrot.helper_funcs.upload_to_tg import upload_to_gdrive, upload_to_tg
+from tobrot.helper_funcs.direct_link_generator import direct_link_generator
+from tobrot.helper_funcs.exceptions import DirectDownloadLinkException
 
 sys.setrecursionlimit(10 ** 4)
 
@@ -120,7 +124,20 @@ def add_url(aria_instance, text_url, c_file_name):
     #     options = {
     #         "dir": c_file_name
     #     }
-    uris = [text_url]
+    if "zippyshare.com" in text_url \
+        or "osdn.net" in text_url \
+        or "mediafire.com" in text_url \
+        or "cloud.mail.ru" in text_url \
+        or "github.com" in text_url \
+        or "yadi.sk" in text_url  \
+        or "racaty.net" in text_url:
+            try:
+                urisitring = direct_link_generator(text_url)
+                uris = [urisitring]
+            except DirectDownloadLinkException as e:
+                LOGGER.info(f'{text_url}: {e}')
+    else:
+        uris = [text_url]
     # Add URL Into Queue
     try:
         download = aria_instance.add_uris(uris, options=options)
@@ -230,7 +247,7 @@ async def call_apropriate_function(
                     message_id = final_response[key_f_res_se]
                     channel_id = str(sent_message_to_update_tg_p.chat.id)[4:]
                     private_link = f"https://t.me/c/{channel_id}/{message_id}"
-                    message_to_send += "👉 <a href='"
+                    message_to_send += "🥏 <a href='"
                     message_to_send += private_link
                     message_to_send += "'>"
                     message_to_send += local_file_name
@@ -238,10 +255,10 @@ async def call_apropriate_function(
                     message_to_send += "\n"
                 if message_to_send != "":
                     mention_req_user = (
-                        f"<a href='tg://user?id={user_id}'>Your Requested Files</a>\n\n"
+                        f"<a href='tg://user?id={user_id}'>𝐒ender</a>\n\n"
                     )
                     message_to_send = mention_req_user + message_to_send
-                    message_to_send = message_to_send + "\n\n" + "#uploads"
+                    message_to_send = message_to_send + "\n\n" + "#BOT1uploads"
                 else:
                     message_to_send = "<i>FAILED</i> to upload files. 😞😞"
                 await user_message.reply_text(
@@ -276,23 +293,49 @@ async def check_progress_for_dl(aria2, gid, event, previous_message):
                 except:
                     pass
                 #
-                if is_file is None:
-                    msgg = f"Conn: {file.connections} <b>|</b> GID: <code>{gid}</code>"
-                else:
-                    msgg = f"P: {file.connections} | S: {file.num_seeders} <b>|</b> GID: <code>{gid}</code>"
-                msg = f"\n`{downloading_dir_name}`"
-                msg += f"\n<b>Speed</b>: {file.download_speed_string()}"
-                msg += f"\n<b>Status</b>: {file.progress_string()} <b>of</b> {file.total_length_string()} <b>|</b> {file.eta_string()} <b>|</b> {msgg}"
-                # msg += f"\nSize: {file.total_length_string()}"
+                prog = pyprog.ProgressBar(" ", " ", total=100, bar_length=15, complete_symbol="▓", not_complete_symbol="░", wrap_bar_prefix=" [", wrap_bar_suffix="]", progress_explain="", progress_loc=pyprog.ProgressBar.PROGRESS_LOC_END)
+                
+                old_stdout = sys.stdout
+                new_stdout = io.StringIO()
+                sys.stdout = new_stdout
+                
+                p = file.progress_string()
+                l = len(p)
+                p=p[0:l-1]
+                a = float(p)
+                
+                prog.set_stat(a)
+                prog.update()
+                output = new_stdout.getvalue()
+                sys.stdout = old_stdout
+                prg = output[3:len(output)]
+                i = 0
+                i = int(i)
+                STR = int(os.environ.get("STR", 30))
+                msg = f"╭──────── ⌊ 📥 <b>Downloading</b> ⌉ \n"
+                msg += "│"+"\n├"+f"{prg}\n" +"│"
+                msg += f"\n├<b>FileName</b> 📚: "
+                while(len(downloading_dir_name)>0):
+                    st = downloading_dir_name[0:STR]
+                    if(i==0):
+                        msg += f"{downloading_dir_name[0:STR-15]}"
+                        downloading_dir_name = downloading_dir_name[STR-15:len(downloading_dir_name)]
+                        i = 1
+                    else:
+                        msg += f"\n│{st}"
+                        downloading_dir_name = downloading_dir_name[STR:len(downloading_dir_name)]
+			
+                msg += f"\n├<b>Speed</b> 🚀 :  <code>{file.download_speed_string()} </code>"
+                msg += f"\n├<b>Total Size</b> 🗂 :  <code>{file.total_length_string()}</code>"
 
-                # if is_file is None :
-                # msg += f"\n<b>Conn:</b> {file.connections}, GID: <code>{gid}</code>"
-                # else :
-                # msg += f"\n<b>Info:</b>[ P : {file.connections} | S : {file.num_seeders} ], GID: <code>{gid}</code>"
+                if is_file is None :
+                   msg += f"\n├<b>Connections</b> 📬 :  <code>{file.connections}</code>"
+                else :
+                   msg += f"\n├<b>Info</b> 📄 : <code>[ P : {file.connections} || S : {file.num_seeders} ]</code>"
 
-                # msg += f"\nStatus: {file.status}"
-                # msg += f"\nETA: {file.eta_string()}"
-                # msg += f"\nGID: <code>{gid}</code>"
+                # msg += f"\n<b>Status</b> : <code>{file.status}</code>"
+                msg += f"\n├<b>ETA</b> ⏳ :  <code>{file.eta_string()}</code>" +"\n│"
+                msg += "\n╰─── ⌊ ⚡️ 𝐔𝐬𝐢𝐧𝐠 𝐄𝐧𝐠𝐢𝐧𝐞 𝐀𝐫𝐢𝐚𝟐𝐜 ⌉"
                 inline_keyboard = []
                 ikeyboard = []
                 ikeyboard.append(

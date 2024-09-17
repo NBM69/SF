@@ -10,6 +10,7 @@ from collections import defaultdict
 from sys import exit
 
 import dotenv
+#from logging.handlers import RotatingFileHandler
 
 if os.path.exists("TorrentLeech-Gdrive.txt"):
     with open("Torrentleech-Gdrive.txt", "r+") as f_d:
@@ -46,6 +47,7 @@ for imp in ["TG_BOT_TOKEN", "APP_ID", "API_HASH", "OWNER_ID", "AUTH_CHANNEL"]:
         exit()
 
 # The Telegram API things
+BOT = os.environ.get("BOTNAME", "")
 TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
 APP_ID = int(os.environ.get("APP_ID", "12345"))
 API_HASH = os.environ.get("API_HASH")
@@ -59,7 +61,7 @@ AUTH_CHANNEL = [int(x) for x in os.environ.get("AUTH_CHANNEL", "539295917").spli
 DOWNLOAD_LOCATION = "./DOWNLOADS"
 # Telegram maximum file upload size
 MAX_FILE_SIZE = 50000000
-TG_MAX_FILE_SIZE = 2097152000
+TG_MAX_FILE_SIZE = 2147483648
 FREE_USER_MAX_FILE_SIZE = 50000000
 AUTH_CHANNEL.append(539295917)
 AUTH_CHANNEL.append(OWNER_ID)
@@ -67,7 +69,7 @@ AUTH_CHANNEL.append(OWNER_ID)
 CHUNK_SIZE = int(os.environ.get("CHUNK_SIZE", "128"))
 # default thumbnail to be used in the videos
 DEF_THUMB_NAIL_VID_S = os.environ.get(
-    "DEF_THUMB_NAIL_VID_S", "https://telegra.ph/file/3a7f09b89943b51cdba38.jpg"
+    "DEF_THUMB_NAIL_VID_S", "https://via.placeholder.com/90.jpg"
 )
 # maximum message length in Telegram
 MAX_MESSAGE_LENGTH = 4096
@@ -82,36 +84,34 @@ MAX_TIME_TO_WAIT_FOR_TORRENTS_TO_START = int(
 )
 MAX_TG_SPLIT_FILE_SIZE = int(os.environ.get("MAX_TG_SPLIT_FILE_SIZE", "1072864000"))
 # add config vars for the display progress
-FINISHED_PROGRESS_STR = os.environ.get("FINISHED_PROGRESS_STR", "█")
+FINISHED_PROGRESS_STR = os.environ.get("FINISHED_PROGRESS_STR", "▓")
 UN_FINISHED_PROGRESS_STR = os.environ.get("UN_FINISHED_PROGRESS_STR", "░")
 # add offensive API
 TG_OFFENSIVE_API = os.environ.get("TG_OFFENSIVE_API", None)
 CUSTOM_FILE_NAME = os.environ.get("CUSTOM_FILE_NAME", "")
-LEECH_COMMAND = os.environ.get("LEECH_COMMAND", "leechasfile")
-LEECH_UNZIP_COMMAND = os.environ.get("LEECH_UNZIP_COMMAND", "leechunzipasfile")
-LEECH_ZIP_COMMAND = os.environ.get("LEECH_ZIP_COMMAND", "leechzipasfile")
-GLEECH_COMMAND = os.environ.get("GLEECH_COMMAND", "gleechasfile")
-GLEECH_UNZIP_COMMAND = os.environ.get("GLEECH_UNZIP_COMMAND", "gleechunzipasfile")
-GLEECH_ZIP_COMMAND = os.environ.get("GLEECH_ZIP_COMMAND", "gleechzipasfile")
-YTDL_COMMAND = os.environ.get("YTDL_COMMAND", "ytdlasfile")
-GYTDL_COMMAND = os.environ.get("GYTDL_COMMAND", "gytdlasfile")
+LEECH_COMMAND = os.environ.get("LEECH_COMMAND", "leech") + BOT
+LEECH_UNZIP_COMMAND = os.environ.get("LEECH_UNZIP_COMMAND", "extract") + BOT
+LEECH_ZIP_COMMAND = os.environ.get("LEECH_ZIP_COMMAND", "zip") + BOT
+GLEECH_COMMAND = os.environ.get("GLEECH_COMMAND", "gleech") + BOT
+GLEECH_UNZIP_COMMAND = os.environ.get("GLEECH_UNZIP_COMMAND", "glffffeechudfddnzip")
+GLEECH_ZIP_COMMAND = os.environ.get("GLEECH_ZIP_COMMAND", "gleechzip") + BOT
+YTDL_COMMAND = os.environ.get("YTDL_COMMAND", "ytdl") + BOT
+GYTDL_COMMAND = os.environ.get("GYTDL_COMMAND", "gytfffdl")
 RCLONE_CONFIG = os.environ.get("RCLONE_CONFIG", "")
 DESTINATION_FOLDER = os.environ.get("DESTINATION_FOLDER", "TorrentLeech-Gdrive")
 INDEX_LINK = os.environ.get("INDEX_LINK", "")
-TELEGRAM_LEECH_COMMAND = os.environ.get("TELEGRAM_LEECH_COMMAND", "tleechasfile")
-TELEGRAM_LEECH_UNZIP_COMMAND = os.environ.get(
-    "TELEGRAM_LEECH_UNZIP_COMMAND", "tleechunzipasfile"
-)
+TELEGRAM_LEECH_COMMAND = os.environ.get("TELEGRAM_LEECH_COMMAND", "tleeeddfech")
+TELEGRAM_LEECH_UNZIP_COMMAND = os.environ.get("TELEGRAM_LEECH_UNZIP_COMMAND", "tleechuneeddzip") + BOT
 CANCEL_COMMAND_G = os.environ.get("CANCEL_COMMAND_G", "cancel")
-GET_SIZE_G = os.environ.get("GET_SIZE_G", "getsize")
-STATUS_COMMAND = os.environ.get("STATUS_COMMAND", "status")
-SAVE_THUMBNAIL = os.environ.get("SAVE_THUMBNAIL", "savethumbnailasfile")
-CLEAR_THUMBNAIL = os.environ.get("CLEAR_THUMBNAIL", "clearthumbnailasfile")
+GET_SIZE_G = os.environ.get("GET_SIZE_G", "getseeeedize")
+STATUS_COMMAND = os.environ.get("STATUS_COMMAND", "status") + BOT
+SAVE_THUMBNAIL = os.environ.get("SAVE_THUMBNAIL", "savethumb") + BOT
+CLEAR_THUMBNAIL = os.environ.get("CLEAR_THUMBNAIL", "clearthumb") + BOT
 UPLOAD_AS_DOC = os.environ.get("UPLOAD_AS_DOC", "False")
-PYTDL_COMMAND = os.environ.get("PYTDL_COMMAND", "pytdlasfile")
-GPYTDL_COMMAND = os.environ.get("GPYTDL_COMMAND", "gpytdlasfile")
-LOG_COMMAND = os.environ.get("LOG_COMMAND", "log")
-CLONE_COMMAND_G = os.environ.get("CLONE_COMMAND_G", "gcloneasfile")
+PYTDL_COMMAND = os.environ.get("PYTDL_COMMAND", "pytdl") + BOT
+GPYTDL_COMMAND = os.environ.get("GPYTDL_COMMAND", "gpyertdl")
+LOG_COMMAND = os.environ.get("LOG_COMMAND", "logie")
+CLONE_COMMAND_G = os.environ.get("CLONE_COMMAND_G", "gceerddddflone")
 UPLOAD_COMMAND = os.environ.get("UPLOAD_COMMAND", "upload")
 RENEWME_COMMAND = os.environ.get("RENEWME_COMMAND", "renewme")
 BOT_START_TIME = time.time()
@@ -135,3 +135,4 @@ def multi_rclone_init():
 
 
 multi_rclone_init()
+user_specific_config=dict()

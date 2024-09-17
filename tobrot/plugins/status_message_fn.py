@@ -11,7 +11,8 @@ import sys
 import time
 import traceback
 
-from tobrot import AUTH_CHANNEL, BOT_START_TIME, LOGGER, MAX_MESSAGE_LENGTH
+from tobrot.UserDynaConfig import UserDynaConfig
+from tobrot import AUTH_CHANNEL, BOT_START_TIME, LOGGER, MAX_MESSAGE_LENGTH, user_specific_config
 from tobrot.helper_funcs.admin_check import AdminCheck
 
 # the logging things
@@ -73,14 +74,18 @@ async def status_message_f(client, message):
     free = humanbytes(free)
 
     ms_g = (
-        f"<b>Bot Uptime</b>: <code>{hr} : {mi} : {se}</code>\n"
-        f"<b>Total disk space</b>: <code>{total}</code>\n"
-        f"<b>Used</b>: <code>{used}</code>\n"
-        f"<b>Free</b>: <code>{free}</code>\n"
+            f'╭───「  ⭕️ BOT STATISTICS ⭕️  」</b>\n\n│' 
+            f'│</b>\n' 
+            f'├  ⏰ Bot Uptime : <code>{hr} : {mi} : {se}</code>\n\n│' 
+            f'├  💾 Total Disk Space : {total}</b>\n\n│' 
+            f'├  📀 Total Used Space : {used}</b>\n\n│' 
+            f'├  💿 Total Free Space : {free}</b>\n\n│' 
+            f'│</b>\n' 
+            f'╰──「 💫 @PopCornsCloud 💫 」</b>'
     )
     # LOGGER.info(ms_g)
 
-    msg = ms_g + "\n" + msg
+    msg = ms_g + "\n\n\n" + msg
     LOGGER.info(msg)
     if len(msg) > MAX_MESSAGE_LENGTH:
         with io.BytesIO(str.encode(msg)) as out_file:
@@ -238,3 +243,13 @@ async def upload_log_file(client, message):
     g = await AdminCheck(client, message.chat.id, message.from_user.id)
     if g:
         await message.reply_document("Torrentleech-Gdrive.txt")
+       
+async def upload_as_doc(client, message):
+    user_specific_config[message.from_user.id]=UserDynaConfig(message.from_user.id,True)
+    await message.reply_text("File will be uploaded as Document")
+
+
+async def upload_as_video(client, message):
+    user_specific_config[message.from_user.id]=UserDynaConfig(message.from_user.id,False)
+    await message.reply_text("File will be uploaded as Video")
+
